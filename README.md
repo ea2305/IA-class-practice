@@ -6,4 +6,5 @@ Ejemplos en JS para creación de perceptrón con compuertas AND y OR
 
 ## Instalación
 ```(js)
+npm install
 ```
