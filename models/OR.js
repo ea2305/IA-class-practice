@@ -3,10 +3,12 @@
 //Definicion de librerias
 let math = require('mathjs');
 
-const 	N = 0.001,  	//Constante de proporcionalidad
+const 	//N = 0.001,  	//Constante de proporcionalidad
+		N = 0.01, 
 		Y = [0,1,1,1],	//Salidas esperadas
 		T = 1,			//tetha
-		Tolerancia = 0.01; // condicion de salida
+		Tolerancia = 0.01, // condicion de salida
+		precision = 14;
 
 //Definimos Entrada de datos
 var X = [
@@ -17,10 +19,11 @@ var X = [
 ];
 
 //Peso aleatorio		//Peso rand
-var W = [ 0.5 , 0.5 ];
+//var W = [ 0.5 , 0.5 ];
+var W = [ 0.1 , 0.1 ];
 
 //Soporte para iteracion
-var total_err = 1,
+var total_err = Tolerancia * 2,
 	iterator = 0;
 
 
@@ -30,8 +33,6 @@ while( Tolerancia < total_err ){
 	total_err = 0;
 
 	X.forEach( ( Xi , index ) => {
-
-		console.log( "Fila: " , Xi , " W : " , W  );
 		
 		//Calculamos U
 		var U = math.multiply( Xi , W );
@@ -61,15 +62,15 @@ while( Tolerancia < total_err ){
 		//Actualizamos elementos !importante
 		W = res;
 		//acumulamos el error
-		total_err += error;
+		total_err += (error * error);
 	});
-	
-	//Obtenemos el promedio del error
-	total_err = total_err / 4;
 
 	iterator++;
-	console.log( "\nTotal error -> " + total_err );
+	//Obtenemos el promedio del error
+	total_err = Math.sqrt(total_err);
 
+	console.log( "\ni:" , iterator ,  ", e => " , math.format(total_err, precision) , " w => " , W  , "\n");
+	
 }
 
 console.log( "\n W final -> " , W , " Iteraciones ->" , iterator);
