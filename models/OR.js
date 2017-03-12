@@ -27,7 +27,7 @@ var total_err = Tolerancia * 2,
 	iterator = 0;
 
 
-while( Tolerancia < total_err ){
+while( total_err > Tolerancia  ){
 
 	//Reiniciamos
 	total_err = 0;
