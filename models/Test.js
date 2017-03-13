@@ -1,67 +1,75 @@
 'use strict';
-//Definicion de librerias
-let math = require('mathjs');
 
-const 	N = 0.0000001,  	//Toleracia
-		Y = [0,1,1,1],	//Salida esperada
-		T = 1,			//tetha
-		Tolerancia = 0.01;
+//Importamos la funcionalidad de perceptron
+let Perceptron = require('./Perceptron');
 
-//Definimos Entrada de datos
-var X = [
-	[ 0 , 0 ],
-	[ 1 , 0 ],
-	[ 0 , 1 ],
-	[ 1 , 1 ]
-];
-
-//Peso aleatorio	OR
-//var W = [ 1.0000000000000004, 1.0000000000000004 ];
-//Peso aleatorio	OR
-var W = [  0.501, 0.501 ];
-
-X.forEach( ( Xi , index ) => {
-
-	console.log( "Fila: " , Xi , " W : " , W  );
-	
-	//Calculamos U
-	var U = math.multiply( Xi , W );
-	//console.log( "Multiplicacion de Xi * W: " , U );
-
-	//Calculamos salida de neurona
-	var Yi = f( U - T );
-	console.log( "Yi <- " , Yi );
-
-	//Calcular el error
-	var error = Y[index] - Yi;
-
-	//console.log( "Error -> " , error )
-
-	//Calculo de elementos para actualizacion de pesos
-				//Operacion N(constante de prop.) obtenido con Xi
-	var op   = math.multiply( N , Xi  ),
-				//Resultado obtenido con error
-		op_1 = math.multiply( op , error  ),
-				//Suma de Wi con Operacion previa
-		res  = math.add( op_1 , W );
+//Parametros estandar
+let custom = {
+	T   : 1,			
+	Tol : 0.01,
+	N   : 0.01, 
+	//Definimos Entrada de datos
+	X   : 
+	[
+		[ 0 , 0 ],
+		[ 1 , 0 ],
+		[ 0 , 1 ],
+		[ 1 , 1 ]
+	],
+	//Peso aleatorio
+	W : [ 0.1 , 0.1 ]
+}
 
 
-	console.log( "Wk + 1 -> " , res , "\n" )
+/* [Compuertas] */
+let AND = [0,0,0,1],
+	OR  = [0,1,1,1],
+	XOR = [0,1,1,0];
 
+/*  N , Y , T , Tol , X , W , ENV  */
+let p_AND = new Perceptron(
+	custom.N,
+	AND,
+	custom.T,
+	custom.Tol,
+	custom.X,
+	custom.W
+);
+
+let p_OR = new Perceptron(
+	custom.N,
+	OR,
+	custom.T,
+	custom.Tol,
+	custom.X,
+	custom.W
+);
+
+p_AND.training();
+p_OR.training();
+
+
+/*
+	0,0
+	0,1
+	0,1
+	1,1
+*/
+let currX = custom.X.map( ( Xi ) =>{
+	return [
+		p_AND.output( Xi ),
+		p_OR.output( Xi )
+	]
 });
 
-console.log( "\n W final -> " , W );
+let p_XOR = new Perceptron(
+	custom.N,
+	XOR,
+	custom.T,
+	custom.Tol,
+	currX,
+	custom.W,
+	true
+);
 
-
-function f( v ){
-	return ( v <= 0)? 0 : 1;
-}
-
-/**
- * Helper function to output a value in the console. Value will be formatted.
- * @param {*} value
- */
-function print (value) {
-	var precision = 14;
-	console.log(math.format(value, precision));
-}
+p_XOR.training();
